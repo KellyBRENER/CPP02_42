@@ -1,4 +1,4 @@
-/******************************************************************************/
+/* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   Fixed.cpp                                          :+:      :+:    :+:   */
@@ -6,39 +6,33 @@
 /*   By: kbrener- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 14:25:34 by kbrener-          #+#    #+#             */
-/*   Updated: 2024/10/28 17:02:53 by kbrener-         ###   ########.fr       */
+/*   Updated: 2024/10/29 11:59:11 by kbrener-         ###   ########.fr       */
 /*                                                                            */
-/******************************************************************************/
+/* ************************************************************************** */
 
 #include "Fixed.hpp"
 
 int const Fixed::_bits = 8;
 
 /*CONSTRUCTOR / DESTRUCTOR*/
-Fixed::Fixed(void) : _integer(0) {
-	std::cout<<"default constructor called"<<std::endl;
-}
+Fixed::Fixed(void) : _integer(0) {}
 
 Fixed::Fixed(const Fixed& fCpy) {
-	std::cout<<"copy constructor called"<<std::endl;
 	*this = fCpy;
 }
 /*Un constructeur prenant un entier constant en paramètre
  et qui convertit celui-ci en virgule fixe*/
 Fixed::Fixed(const int n) {
-	std::cout << "Int constructor called" << std::endl;
 	_integer = n << _bits;
 }
 
 /*Un constructeur prenant un flottant constant en paramètre
 et qui convertit celui-ci en virgule fixe.*/
 Fixed::Fixed(const float f) {
-	std::cout << "Float constructor called" << std::endl;
 	_integer = roundf(f * (1 << _bits));
 }
 
 Fixed::~Fixed(void) {
-	std::cout<<"destructor called"<<std::endl;
 }
 /*GETTER / SETTER*/
 int	Fixed::getRawBits(void) const {
@@ -46,7 +40,6 @@ int	Fixed::getRawBits(void) const {
 }
 
 void	Fixed::setRawBits(int const raw) {
-	std::cout<<"setRawBits member function called"<<std::endl;
 	_integer = raw;
 }
 
@@ -62,68 +55,92 @@ int		Fixed::toInt( void ) const {
 /*OPERATOR OVERLOAD*/
 
 Fixed&	Fixed::operator=(const Fixed& rhs) {
-	std::cout<<"copy assignment operator called"<<std::endl;
-	_integer= rhs.getRawBits();
+	_integer = rhs.getRawBits();
 	return *this;
 }
 
 bool	Fixed::operator>(const Fixed& rhs) {
-	if (_integer > rhs.getRawBits())
-		return true;
-	return false;
+	return (_integer > rhs.getRawBits());
 }
 bool	Fixed::operator<(const Fixed& rhs) {
-	if (_integer < rhs.getRawBits())
-		return true;
-	return false;
+	return (_integer < rhs.getRawBits());
 }
 bool	Fixed::operator>=(const Fixed& rhs){
-	if (_integer >= rhs.getRawBits())
-		return true;
-	return false;
+	return (_integer >= rhs.getRawBits());
 }
 bool	Fixed::operator<=(const Fixed& rhs){
-	if (_integer <= rhs.getRawBits())
-		return true;
-	return false;
+	return (_integer <= rhs.getRawBits());
 }
 bool	Fixed::operator==(const Fixed& rhs){
-	if (_integer == rhs.getRawBits())
-		return true;
-	return false;
+	return (_integer == rhs.getRawBits());
 }
 bool	Fixed::operator!=(const Fixed& rhs){
-	if (_integer != rhs.getRawBits())
-		return true;
-	return false;
+	return (_integer != rhs.getRawBits());
 }
 
 Fixed	Fixed::operator+(const Fixed& rhs) {
-	Fixed	sum(_integer + rhs.getRawBits());
+	Fixed	sum;
+	sum.setRawBits(_integer + rhs.getRawBits());
 	return sum;
 }
 Fixed	Fixed::operator-(const Fixed& rhs) {
-	Fixed	sub(_integer - rhs.getRawBits());
+	Fixed	sub;
+	sub.setRawBits(_integer - rhs.getRawBits());
 	return sub;
 }
 Fixed	Fixed::operator*(const Fixed& rhs) {
-	Fixed	mult(_integer * rhs.getRawBits());
+	Fixed	mult;
+	mult.setRawBits((_integer * rhs.getRawBits()) >> _bits);
 	return mult;
 }
 Fixed	Fixed::operator/(const Fixed& rhs) {
-	Fixed	div(_integer / rhs.getRawBits());
+	Fixed	div;
+	div.setRawBits((_integer << _bits) / rhs.getRawBits());
 	return div;
 }
+/*pre-incrementation*/
+Fixed&	Fixed::operator++() {
+	_integer += 1;
+	return (*this);
+}
 
-Fixed&	Fixed::operator++();
-Fixed	Fixed::operator++(int);
-Fixed&	Fixed::operator--();
-Fixed	Fixed::operator--(int);
+/*post-incrementation*/
+Fixed	Fixed::operator++(int) {
+	Fixed	temp(*this);
+	_integer += 1;
+	return (temp);
+}
 
-static Fixed&	min(Fixed& a, Fixed& b);
-static const Fixed&	min(const Fixed& a, const Fixed& b);
-static Fixed&	max(Fixed& a, Fixed& b);
-static const Fixed&	max(const Fixed& a, const Fixed& b);
+/*pre-decrementation*/
+Fixed&	Fixed::operator--() {
+	_integer -= 1;
+	return (*this);
+}
+
+/*post-decrementation*/
+Fixed	Fixed::operator--(int) {
+	Fixed	temp(*this);
+	_integer -= 1;
+	return (*this);
+}
+
+/*utilisation de l'operateur ternaire '?' :
+condition ? valeur_si_vrai : valeur_si_faux*/
+Fixed&	Fixed::min(Fixed& a, Fixed& b) {
+	return (a.getRawBits() < b.getRawBits() ? a : b);
+}
+
+const Fixed&	Fixed::min(const Fixed& a, const Fixed& b) {
+	return (a.getRawBits() < b.getRawBits() ? a : b);
+}
+
+Fixed&	Fixed::max(Fixed& a, Fixed& b) {
+	return (a.getRawBits() > b.getRawBits() ? a : b);
+}
+
+const Fixed&	Fixed::max(const Fixed& a, const Fixed& b) {
+	return (a.getRawBits() > b.getRawBits() ? a : b);
+}
 
 /*STREAM OPERATOR*/
 std::ostream&	operator<<(std::ostream& o, const Fixed& rhs) {
