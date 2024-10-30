@@ -6,7 +6,7 @@
 /*   By: kbrener- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 14:25:34 by kbrener-          #+#    #+#             */
-/*   Updated: 2024/10/29 11:59:11 by kbrener-         ###   ########.fr       */
+/*   Updated: 2024/10/30 14:47:47 by kbrener-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ Fixed&	Fixed::operator--() {
 Fixed	Fixed::operator--(int) {
 	Fixed	temp(*this);
 	_integer -= 1;
-	return (*this);
+	return (temp);
 }
 
 /*utilisation de l'operateur ternaire '?' :
